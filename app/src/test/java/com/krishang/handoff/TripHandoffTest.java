@@ -63,4 +63,11 @@ public class TripHandoffTest {
         assertThrows(IllegalArgumentException.class, () -> new TripHandoff.Trip(1, List.of(" "), "End"));
         assertThrows(IllegalArgumentException.class, () -> new TripHandoff.Trip(1, null, "End"));
     }
+
+    @Test public void trimsUnicodeWhitespaceAtEdgesAndRejectsBlankPlaces() {
+        assertEquals("Coffee shop", TripHandoff.trimPlace("\u2003Coffee shop\u2003"));
+        assertEquals("", TripHandoff.trimPlace("\u2003\t"));
+        assertThrows(IllegalArgumentException.class,
+                () -> new TripHandoff.Trip(1, List.of(), "\u2003"));
+    }
 }

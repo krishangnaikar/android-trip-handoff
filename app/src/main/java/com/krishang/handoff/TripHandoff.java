@@ -4,12 +4,32 @@ import java.util.List;
 import java.util.Objects;
 
 final class TripHandoff {
+    static String trimPlace(String place) {
+        int start = 0;
+        int end = place.length();
+        while (start < end) {
+            int codePoint = place.codePointAt(start);
+            if (!Character.isWhitespace(codePoint)) break;
+            start += Character.charCount(codePoint);
+        }
+        while (start < end) {
+            int codePoint = place.codePointBefore(end);
+            if (!Character.isWhitespace(codePoint)) break;
+            end -= Character.charCount(codePoint);
+        }
+        return place.substring(start, end);
+    }
+
+    private static boolean blank(String place) {
+        return place == null || place.codePoints().allMatch(Character::isWhitespace);
+    }
+
     record Trip(long revision, List<String> stops, String destination) {
         Trip {
-            if (revision < 1 || destination == null || destination.isBlank()) {
+            if (revision < 1 || blank(destination)) {
                 throw new IllegalArgumentException("Trip needs a revision and destination");
             }
-            if (stops == null || stops.stream().anyMatch(stop -> stop == null || stop.isBlank())) {
+            if (stops == null || stops.stream().anyMatch(TripHandoff::blank)) {
                 throw new IllegalArgumentException("Stops cannot be blank");
             }
             stops = List.copyOf(stops);

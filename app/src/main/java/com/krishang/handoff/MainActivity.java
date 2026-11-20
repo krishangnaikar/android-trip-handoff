@@ -50,7 +50,7 @@ public final class MainActivity extends Activity {
         if (saved != null) destination.setText(saved.getString("draft", ""));
         layout.addView(destination);
         addButton(layout, "Save new revision", () -> {
-            String value = destination.getText().toString().strip();
+            String value = TripHandoff.trimPlace(destination.getText().toString());
             if (value.isEmpty()) {
                 destination.setError("Enter a destination");
                 return;
